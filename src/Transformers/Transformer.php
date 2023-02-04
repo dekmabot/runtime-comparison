@@ -30,6 +30,11 @@ class Transformer
         return $this->resolve(Winner::class, $data);
     }
 
+    public function round(array $data, ?int $precision): array
+    {
+        return $this->resolve(Round::class, $data, $precision);
+    }
+
     public function separator(array $data): array
     {
         return $this->resolve(Separator::class, $data);
@@ -55,8 +60,8 @@ class Transformer
         return $result;
     }
 
-    protected function resolve(TransformerContract|string $transformer, array $data): array
+    protected function resolve(TransformerContract|string $transformer, array $data, ...$props): array
     {
-        return (new $transformer())->transform($data, $this->roundPrecision);
+        return (new $transformer(...$props))->transform($data);
     }
 }

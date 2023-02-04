@@ -21,12 +21,15 @@ class Comparator
 
     protected bool $withData = true;
 
+    protected ?int $roundPrecision = null;
+
     protected array $result = [];
 
     public function __construct(
         protected Runner $runner = new Runner(),
         protected Transformer $transformer = new Transformer()
-    ) {
+    )
+    {
         $this->view = new View(new SymfonyStyle(
             new ArgvInput(),
             new ConsoleOutput()
@@ -42,7 +45,7 @@ class Comparator
 
     public function roundPrecision(?int $precision): self
     {
-        $this->transformer->setRoundPrecision($precision);
+        $this->roundPrecision = $precision;
 
         return $this;
     }
@@ -111,8 +114,13 @@ class Comparator
     {
         $table = $this->withData() ? $this->transformer->forTime($this->result) : [];
 
-        $stats  = $this->transformer->forStats($this->result);
+        $stats = $this->transformer->forStats($this->result);
         $winner = $this->transformer->forWinners($stats);
+
+        if($this->roundPrecision !== null){
+            $table = $this->transformer->round($table, $this->roundPrecision);
+            $stats = $this->transformer->round($stats, $this->roundPrecision);
+        }
 
         $this->view->table($this->transformer->merge($table, $stats, $winner));
     }
@@ -124,7 +132,7 @@ class Comparator
 
     protected function validate(mixed $callback): void
     {
-        if (! is_callable($callback)) {
+        if (!is_callable($callback)) {
             throw new ValueIsNotCallableException(gettype($callback));
         }
     }
