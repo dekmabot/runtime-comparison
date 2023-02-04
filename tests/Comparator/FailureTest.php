@@ -66,4 +66,15 @@ class FailureTest extends TestCase
             'second' => 123,
         ]);
     }
+
+    public function testWithMemory(): void
+    {
+        $this->comparator()
+            ->testMemory()
+            //->withoutData()
+            ->compare([
+                'first'  => fn () => str_repeat('a', 1024 * 1024 * 4),
+                'second' => fn () => str_repeat('a', 1024 * 1024 * 128),
+            ]);
+    }
 }

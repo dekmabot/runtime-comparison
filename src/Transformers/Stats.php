@@ -21,9 +21,11 @@ class Stats extends Base
     {
         $items = [];
 
-        foreach ($data as $name => $iterations) {
-            foreach ($this->methods as $method) {
-                $this->put($items, $method, $name, fn () => $this->round(call_user_func([$this, $method], $iterations), $roundPrecision));
+        foreach ($data as $name => $metrics) {
+            foreach ($metrics as $metricName => $iterations) {
+                foreach ($this->methods as $method) {
+                    $this->put($items, $method, $name . ' ' . $metricName, fn () => $this->round(call_user_func([$this, $method], $iterations), $roundPrecision));
+                }
             }
         }
 

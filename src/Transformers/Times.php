@@ -10,10 +10,12 @@ class Times extends Base
     {
         $items = [];
 
-        foreach ($data as $name => $values) {
-            foreach ($values as $iteration => $time) {
-                $items[$iteration]['#']   = $iteration;
-                $items[$iteration][$name] = $this->round($time, $roundPrecision);
+        foreach ($data as $name => $metrics) {
+            foreach ($metrics as $metricName => $values) {
+                foreach ($values as $iteration => $value) {
+                    $items[$iteration]['#']                       = $iteration;
+                    $items[$iteration][$name . ' ' . $metricName] = $this->round($value, $roundPrecision);
+                }
             }
         }
 
